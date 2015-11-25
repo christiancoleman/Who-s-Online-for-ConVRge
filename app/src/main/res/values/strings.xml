@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">ConVRge Companion</string>
 
-    <string name="hello_world">Hello world!</string>
+    <string name="users_online">0 users online</string>
+    <string name="users_watching">0 users watching</string>
+    <string name="default_user">Darth Vader</string>
+
     <string name="action_settings">Settings</string>
+    <string name="logo_description">Convrge Logo</string>
 </resources>

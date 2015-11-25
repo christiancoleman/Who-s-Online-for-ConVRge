@@ -1,9 +1,14 @@
 package enfieldacademy.convrgecompanion;
 
 import android.app.IntentService;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.SystemClock;
 import android.util.Log;
+
+import android.support.v4.app.NotificationCompat;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,6 +27,7 @@ public class ConVRgeCompanionService extends IntentService{
 
     private final String TAG = "ConVRgeCompanionService";
     private final String ENDPOINT = "http://www.convrge.co/api/users";
+    private final int NOTIFICATION_ID = 12345;
 
     public int mPauseDuration = 10000;
     public ConVRgeServer mServerObject;
@@ -55,19 +61,24 @@ public class ConVRgeCompanionService extends IntentService{
     @Override
     protected void onHandleIntent(Intent workIntent){
         while(true){
-            SystemClock.sleep(mPauseDuration);
-            Log.d(TAG, mPauseDuration / 1000 + " seconds has passed"); // 1000 is # ms = 1 second
-
             queryServer();
             parseResult();
             buildConVRgeServer();
             printResults();
+            updateUI();
+            createNotifications();
+            sleep(mPauseDuration);
         }
     }
 
     public void createServerObject(){
         // this provides the server object with the default values
         mServerObject = new ConVRgeServer();
+    }
+
+    public void sleep(int duration){
+        SystemClock.sleep(duration);
+        Log.d(TAG, mPauseDuration / 1000 + " seconds has passed"); // 1000 is # ms = 1 second
     }
 
     public void queryServer(){
@@ -149,5 +160,35 @@ public class ConVRgeCompanionService extends IntentService{
 
     public void printResults(){
         mServerObject.print();
+    }
+
+    public void updateUI(){
+        UIThread newUIThread = new UIThread();
+        newUIThread.start();
+    }
+
+    public void createNotifications(){
+        Intent targetIntent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, targetIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Notification notification = new NotificationCompat.Builder(this)
+                .setContentTitle("Convrge - A friend is online!")
+                .setContentText("Para is online!")
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
+                .build();
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.notify(NOTIFICATION_ID, notification);
+    }
+
+    public class UIThread extends Thread{
+        @Override
+        public void run() {
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            sendBroadcast(intent);
+            stopSelf();
+        }
     }
 }
