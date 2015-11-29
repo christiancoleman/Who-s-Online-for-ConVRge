@@ -1,3 +1,11 @@
 Replicates the functionality found at http://www.convrge.co/online using the API available at http://www.convrge.co/api/users
 
-Current commit is just printing out the relevant information in debug logs. No UI available at this time. Clearly not usable by anyone.. yet.
+Todo:
+- show names of users online
+- replace service
+- give app an icon
+- add setting to increase or decrease duration check
+- on resume it doesn't perform a check immediately but after duration passes
+- (nice to have) add conditional notifications based on users selected as friends
+
+![alt tag](http://i.imgur.com/hXZlj0d.png)
