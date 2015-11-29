@@ -1,7 +1,6 @@
 Replicates the functionality found at http://www.convrge.co/online using the API available at http://www.convrge.co/api/users
 
 Todo:
-- show names of users online
 - replace service
 - give app an icon
 - add setting to increase or decrease duration check
