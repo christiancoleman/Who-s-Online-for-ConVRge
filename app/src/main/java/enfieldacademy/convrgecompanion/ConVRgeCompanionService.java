@@ -23,6 +23,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class ConVRgeCompanionService extends IntentService{
 
@@ -52,7 +53,7 @@ public class ConVRgeCompanionService extends IntentService{
         /////////////////////////////////
         // INSTANTIATES SERVER OBJECT ///
         ////////////////////////////////
-        createServerObject();
+        createServerObjects();
     }
 
     @Override
@@ -87,8 +88,8 @@ public class ConVRgeCompanionService extends IntentService{
         return super.onUnbind(intent);
     }
 
-    public void createServerObject(){
-        // this provides the server object with the default values
+    public void createServerObjects(){
+        mOldServerObject = new ConVRgeServer();
         mServerObject = new ConVRgeServer();
     }
 
@@ -190,13 +191,30 @@ public class ConVRgeCompanionService extends IntentService{
 
     public void createNotifications(){
         Log.d(TAG, "createNotifications() called");
+        if(mOldServerObject.getOnlineUsersList().size() == 0) return;
+        ArrayList<String> compareList = new ArrayList<>();
+        String newOnes = "";
+        for(int i = 0; i < mServerObject.getOnlineUsersList().size(); i++){
+            compareList.add(mServerObject.getOnlineUsersList().get(i).getPlayerName());
+        }
+        for(int i = 0; i < compareList.size(); i++){
+            if(compareList.contains(mOldServerObject.getOnlineUsersList().get(i).getPlayerName())) continue;
+            if(newOnes.equals("")) {
+                newOnes = compareList.get(i);
+            } else{
+                newOnes += ", " + compareList.get(i);
+            }
+        }
+
+        if(newOnes.equals("")) return;
+
         Context c = getApplicationContext();
         Intent targetIntent = new Intent(c, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(c, 0, targetIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Notification notification = new NotificationCompat.Builder(c)
                 .setContentTitle("ConVRge - A friend is online!")
-                .setContentText("Para is online!")
+                .setContentText(newOnes)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
@@ -207,7 +225,7 @@ public class ConVRgeCompanionService extends IntentService{
     }
 
     public void updateOldServerObject(){
-
+        mOldServerObject = mServerObject;
     }
 
     public class ConVRgeUIThread extends Thread{
@@ -221,6 +239,10 @@ public class ConVRgeCompanionService extends IntentService{
             intent.setAction("com.enfieldacademy.CUSTOM_INTENT");
             intent.putExtra("USERS_ONLINE", mServerObject.getNumUsersOnline());
             intent.putExtra("USERS_WATCHING", mServerObject.getNumUsersWatching());
+            for(int i = 0 ; i < mServerObject.getNumUsersOnline(); i++){
+                intent.putExtra(i + "-id", mServerObject.getOnlineUsersList().get(i).getId());
+                intent.putExtra(i + "-name", mServerObject.getOnlineUsersList().get(i).getPlayerName());
+            }
             sendBroadcast(intent);
             stopSelf();
         }

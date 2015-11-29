@@ -13,6 +13,8 @@ import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
 
     private final String TAG = "MainActivity";
@@ -21,21 +23,13 @@ public class MainActivity extends AppCompatActivity {
     public ConVRgeCompanionServiceReceiver mServiceReceiver;
     public TextView mUsersOnlineTV;
     public TextView mUsersWatchingTV;
-    public ListView mListView;
+    public TextView mListOfUsersOnlineTV;
 
     private ConVRgeServer mLocalServer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.activity_main);
-
-        setTitle("");
-
-        mUsersOnlineTV = (TextView) findViewById(R.id.users_online);
-        mUsersWatchingTV = (TextView) findViewById(R.id.users_watching);
-        mListView = (ListView) findViewById(R.id.list_view);
     }
 
     @Override
@@ -47,9 +41,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume(){
         super.onResume();
 
-        MyApplication.activityResumed();
+        setContentView(R.layout.activity_main);
+
+        setTitle("");
 
         mLocalServer = new ConVRgeServer();
+
+        mUsersOnlineTV = (TextView) findViewById(R.id.users_online);
+        mUsersWatchingTV = (TextView) findViewById(R.id.users_watching);
+        mListOfUsersOnlineTV = (TextView) findViewById(R.id.list_of_online_users);
+
+        MyApplication.activityResumed();
 
         /////////////////////////////////
         //// STARTS THE SERVICE /////////
@@ -123,14 +125,28 @@ public class MainActivity extends AppCompatActivity {
             if(extras != null) {
                 mLocalServer.setNumUsersOnline(extras.getInt("USERS_ONLINE"));
                 mLocalServer.setNumUsersWatching(extras.getInt("USERS_WATCHING"));
+                ArrayList<ConVRgePlayer> temp = new ArrayList<>();
+                for(int i = 0; i < mLocalServer.getNumUsersOnline(); i++){
+                    int id = extras.getInt(i + "-id");
+                    String name = extras.getString(i + "-name");
+                    temp.add(new ConVRgePlayer(id, name));
+                }
+                mLocalServer.setOnlineUsersList(temp);
 
-                if(mUsersWatchingTV == null) return;
-                if(mUsersOnlineTV == null) return;
                 mUsersOnlineTV.setText(mLocalServer.getNumUsersOnline() + " users online");
                 mUsersWatchingTV.setText(mLocalServer.getNumUsersWatching() + " users watching");
+                mListOfUsersOnlineTV.setText("");
+                for(int i = 0; i < mLocalServer.getOnlineUsersList().size(); i++){
+                    String optionalText = "";
+                    if(i != 0) optionalText = ", ";
+                    mListOfUsersOnlineTV.setText(mListOfUsersOnlineTV.getText()
+                            + optionalText
+                            + mLocalServer.getOnlineUsersList().get(i).getPlayerName());
+                }
 
-                Log.d(TAG, "***" + mLocalServer.getNumUsersOnline());
-                Log.d(TAG, "***" + mLocalServer.getNumUsersWatching());
+                Log.d(TAG, "***");
+                mLocalServer.print();
+                Log.d(TAG, "***");
             }
         }
     }
