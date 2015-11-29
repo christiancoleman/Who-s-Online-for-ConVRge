@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.SystemClock;
 import android.util.Log;
@@ -30,6 +31,7 @@ public class ConVRgeCompanionService extends IntentService{
     private final int NOTIFICATION_ID = 12345;
 
     public int mPauseDuration = 10000;
+    public ConVRgeServer mOldServerObject;
     public ConVRgeServer mServerObject;
     public String mResultString;
     public JSONObject mConVRgeMainJSONObject = null;
@@ -60,25 +62,34 @@ public class ConVRgeCompanionService extends IntentService{
 
     @Override
     protected void onHandleIntent(Intent workIntent){
+        //noinspection InfiniteLoopStatement
         while(true){
+            Log.d(TAG, "=============================================================");
+            MyApplication.serviceRunning();
             queryServer();
             parseResult();
             buildConVRgeServer();
             printResults();
-            updateUI();
-            createNotifications();
+            updateUIorCreateNotifications();
             sleep(mPauseDuration);
         }
+    }
+
+    public void sleep(int duration){
+        Log.d(TAG, "=============================================================");
+        SystemClock.sleep(duration);
+        Log.d(TAG, mPauseDuration / 1000 + " seconds has passed"); // 1000 is # ms = 1 second
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        MyApplication.servicePaused();
+        return super.onUnbind(intent);
     }
 
     public void createServerObject(){
         // this provides the server object with the default values
         mServerObject = new ConVRgeServer();
-    }
-
-    public void sleep(int duration){
-        SystemClock.sleep(duration);
-        Log.d(TAG, mPauseDuration / 1000 + " seconds has passed"); // 1000 is # ms = 1 second
     }
 
     public void queryServer(){
@@ -162,17 +173,29 @@ public class ConVRgeCompanionService extends IntentService{
         mServerObject.print();
     }
 
+    public void updateUIorCreateNotifications(){
+        if(MyApplication.isActivityVisible()) {
+            updateUI();
+        } else {
+            createNotifications();
+            updateOldServerObject();
+        }
+    }
+
     public void updateUI(){
-        UIThread newUIThread = new UIThread();
+        Log.d(TAG, "updateUI() called");
+        ConVRgeUIThread newUIThread = new ConVRgeUIThread();
         newUIThread.start();
     }
 
     public void createNotifications(){
-        Intent targetIntent = new Intent(this, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, targetIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Log.d(TAG, "createNotifications() called");
+        Context c = getApplicationContext();
+        Intent targetIntent = new Intent(c, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(c, 0, targetIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Notification notification = new NotificationCompat.Builder(this)
-                .setContentTitle("Convrge - A friend is online!")
+        Notification notification = new NotificationCompat.Builder(c)
+                .setContentTitle("ConVRge - A friend is online!")
                 .setContentText("Para is online!")
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentIntent(pendingIntent)
@@ -183,10 +206,21 @@ public class ConVRgeCompanionService extends IntentService{
         notificationManager.notify(NOTIFICATION_ID, notification);
     }
 
-    public class UIThread extends Thread{
+    public void updateOldServerObject(){
+
+    }
+
+    public class ConVRgeUIThread extends Thread{
+
+        private final String TAG = "ConVRgeUIThread";
+
         @Override
         public void run() {
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            Log.d(TAG, "This is being called at least.");
+            Intent intent = new Intent();
+            intent.setAction("com.enfieldacademy.CUSTOM_INTENT");
+            intent.putExtra("USERS_ONLINE", mServerObject.getNumUsersOnline());
+            intent.putExtra("USERS_WATCHING", mServerObject.getNumUsersWatching());
             sendBroadcast(intent);
             stopSelf();
         }
