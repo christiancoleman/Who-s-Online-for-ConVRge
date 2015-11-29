@@ -24,6 +24,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Objects;
 
 public class ConVRgeCompanionService extends IntentService{
 
@@ -190,31 +191,36 @@ public class ConVRgeCompanionService extends IntentService{
     }
 
     public void createNotifications(){
-        Log.d(TAG, "createNotifications() called");
-        if(mOldServerObject.getOnlineUsersList().size() == 0) return;
-        ArrayList<String> compareList = new ArrayList<>();
-        String newOnes = "";
-        for(int i = 0; i < mServerObject.getOnlineUsersList().size(); i++){
-            compareList.add(mServerObject.getOnlineUsersList().get(i).getPlayerName());
-        }
-        for(int i = 0; i < compareList.size(); i++){
-            if(compareList.contains(mOldServerObject.getOnlineUsersList().get(i).getPlayerName())) continue;
-            if(newOnes.equals("")) {
-                newOnes = compareList.get(i);
-            } else{
-                newOnes += ", " + compareList.get(i);
+        Log.d(TAG, "createNotifications() START");
+
+        String newPlayersString = "";
+        ArrayList<ConVRgePlayer> oldPlayersList = mOldServerObject.getOnlineUsersList();
+        ArrayList<ConVRgePlayer> newPlayersList = mServerObject.getOnlineUsersList();
+
+        Log.d(TAG, "newPlayersString = _" + newPlayersString + "_");
+        Log.d(TAG, "oldPlayerList.size()" + oldPlayersList.size());
+        Log.d(TAG, "newPlayersList.size()" + newPlayersList.size());
+
+        for(ConVRgePlayer newPlayer : newPlayersList){
+            boolean found = false;
+            for(ConVRgePlayer oldPlayer : oldPlayersList){
+                if(oldPlayer.getPlayerName().equals(newPlayer.getPlayerName())) found = true;
+            }
+            if(!found) {
+                if(newPlayersString.equals("")) newPlayersString = newPlayer.getPlayerName();
+                else newPlayersString += ", " + newPlayer.getPlayerName();
             }
         }
 
-        if(newOnes.equals("")) return;
+        if(newPlayersString.equals("")) return;
 
         Context c = getApplicationContext();
         Intent targetIntent = new Intent(c, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(c, 0, targetIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Notification notification = new NotificationCompat.Builder(c)
-                .setContentTitle("ConVRge - A friend is online!")
-                .setContentText(newOnes)
+                .setContentTitle("Convrge - new player online!")
+                .setContentText(newPlayersString)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
@@ -222,10 +228,19 @@ public class ConVRgeCompanionService extends IntentService{
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         notificationManager.notify(NOTIFICATION_ID, notification);
+        Log.d(TAG, "createNotifications() END");
     }
 
     public void updateOldServerObject(){
-        mOldServerObject = mServerObject;
+        Log.d(TAG, "updateOldServerObject()");
+        ArrayList<ConVRgePlayer> serverList = new ArrayList<>();
+        for(int i = 0; i < mServerObject.getOnlineUsersList().size(); i++){
+            ConVRgePlayer player = mServerObject.getOnlineUsersList().get(i);
+            serverList.add(new ConVRgePlayer(player.getId(), player.getPlayerName()));
+        }
+        mOldServerObject.setOnlineUsersList(serverList);
+        mOldServerObject.setNumUsersOnline(mServerObject.getNumUsersOnline());
+        mOldServerObject.setNumUsersWatching(mServerObject.getNumUsersWatching());
     }
 
     public class ConVRgeUIThread extends Thread{
