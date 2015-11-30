@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">ConVRge Companion</string>
 
-    <string name="users_online">8 users online</string>
-    <string name="users_watching">3 users watching</string>
-    <string name="default_user_list">Darth Vader, Super Mario, Link, Zelda, Stewie Griffin, Brian Griffin, Stan Smith, Parachan</string>
+    <string name="users_online"> </string>
+    <string name="users_watching">Querying server&#8230;</string>
+    <string name="default_user_list"> </string>
 
     <string name="action_settings">Settings</string>
     <string name="logo_description">Convrge Logo</string>

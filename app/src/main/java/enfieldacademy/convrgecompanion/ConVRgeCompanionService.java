@@ -23,8 +23,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Objects;
 
 public class ConVRgeCompanionService extends IntentService{
 
@@ -32,7 +30,7 @@ public class ConVRgeCompanionService extends IntentService{
     private final String ENDPOINT = "http://www.convrge.co/api/users";
     private final int NOTIFICATION_ID = 12345;
 
-    public int mPauseDuration = 10000;
+    public int mPauseDuration = 5000;
     public ConVRgeServer mOldServerObject;
     public ConVRgeServer mServerObject;
     public String mResultString;
@@ -191,15 +189,15 @@ public class ConVRgeCompanionService extends IntentService{
     }
 
     public void createNotifications(){
-        Log.d(TAG, "createNotifications() START");
+        Log.d(TAG, "createNotifications() STARTED");
 
         String newPlayersString = "";
         ArrayList<ConVRgePlayer> oldPlayersList = mOldServerObject.getOnlineUsersList();
         ArrayList<ConVRgePlayer> newPlayersList = mServerObject.getOnlineUsersList();
 
         Log.d(TAG, "newPlayersString = _" + newPlayersString + "_");
-        Log.d(TAG, "oldPlayerList.size()" + oldPlayersList.size());
-        Log.d(TAG, "newPlayersList.size()" + newPlayersList.size());
+        Log.d(TAG, "oldPlayerList.size() = " + oldPlayersList.size());
+        Log.d(TAG, "newPlayersList.size() = " + newPlayersList.size());
 
         for(ConVRgePlayer newPlayer : newPlayersList){
             boolean found = false;
@@ -212,7 +210,10 @@ public class ConVRgeCompanionService extends IntentService{
             }
         }
 
-        if(newPlayersString.equals("")) return;
+        if(newPlayersString.equals("")) {
+            Log.d(TAG, "createNotifications() ENDED (Premature)");
+            return;
+        }
 
         Context c = getApplicationContext();
         Intent targetIntent = new Intent(c, MainActivity.class);
@@ -228,7 +229,7 @@ public class ConVRgeCompanionService extends IntentService{
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         notificationManager.notify(NOTIFICATION_ID, notification);
-        Log.d(TAG, "createNotifications() END");
+        Log.d(TAG, "createNotifications() ENDED (Notification made!)");
     }
 
     public void updateOldServerObject(){
@@ -259,7 +260,7 @@ public class ConVRgeCompanionService extends IntentService{
                 intent.putExtra(i + "-name", mServerObject.getOnlineUsersList().get(i).getPlayerName());
             }
             sendBroadcast(intent);
-            stopSelf();
+            //stopSelf();
         }
     }
 }
