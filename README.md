@@ -4,7 +4,8 @@ Todo:
 - replace service
 - give app an icon
 - add setting to increase or decrease duration check
-- on resume it doesn't perform a check immediately but after duration passes
 - (nice to have) add conditional notifications based on users selected as friends
 
-![alt tag](http://i.imgur.com/hXZlj0d.png)
+![alt tag](http://i.imgur.com/VHDPmO3.png)
+![alt tag](http://i.imgur.com/uQeiHTz.png)
+![alt tag](http://i.imgur.com/ZiDs4E3.png)
