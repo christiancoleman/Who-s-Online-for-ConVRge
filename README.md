@@ -8,4 +8,5 @@ Todo:
 
 ![alt tag](http://i.imgur.com/VHDPmO3.png)
 ![alt tag](http://i.imgur.com/uQeiHTz.png)
-![alt tag](http://i.imgur.com/ZiDs4E3.png)
+![alt tag](http://i.imgur.com/7CIQaXr.png)
+![alt tag](http://i.imgur.com/yLdxAwW.png)
