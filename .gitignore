@@ -1,13 +1,9 @@
 # Added by me
 .idea/
 *.iml
-build.gradle
-gradle/
 .gradle/
 gradlew
 gradlew.bat
-gradle.properties
-settings.gradle
 local.properties
 *.apk
 build/
