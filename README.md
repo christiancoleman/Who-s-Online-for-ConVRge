@@ -6,7 +6,7 @@ Todo:
 - add setting to increase or decrease duration check
 - (nice to have) add conditional notifications based on users selected as friends
 
-![alt tag](http://i.imgur.com/VHDPmO3.png)
-![alt tag](http://i.imgur.com/uQeiHTz.png)
-![alt tag](http://i.imgur.com/7CIQaXr.png)
-![alt tag](http://i.imgur.com/yLdxAwW.png)
+![alt tag](https://github.com/christiancoleman/ConVRgeCompanion/blob/master/images/1.png)
+![alt tag](https://github.com/christiancoleman/ConVRgeCompanion/blob/master/images/2.png)
+![alt tag](https://github.com/christiancoleman/ConVRgeCompanion/blob/master/images/3.png)
+![alt tag](https://github.com/christiancoleman/ConVRgeCompanion/blob/master/images/4.png)
