@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.SystemClock;
 import android.util.Log;
 
@@ -254,12 +255,15 @@ public class ConVRgeCompanionService extends IntentService{
         Intent targetIntent = new Intent(c, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(c, 0, targetIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+        Uri notificationSound = Uri.parse("android.resource//" + getPackageName() + "/" + R.raw.player_joined_sound);
+
         Notification notification = new NotificationCompat.Builder(c)
                 .setContentTitle("ConVRge - player online!")
                 .setContentText(newPlayersString)
                 .setTicker(newPlayersString + " online now!")
                 .setSmallIcon(R.mipmap.friend_online)
                 .setColor(Color.BLACK)
+                .setSound(notificationSound)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
                 .build();
