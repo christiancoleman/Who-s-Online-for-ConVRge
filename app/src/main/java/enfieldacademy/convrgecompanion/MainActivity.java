@@ -58,7 +58,10 @@ public class MainActivity extends AppCompatActivity {
         /////////////////////////////////
         //// STARTS THE SERVICE /////////
         /////////////////////////////////
-        if(!MyApplication.isServiceRunning()) startService();
+        if(!MyApplication.isServiceRunning()) {
+            ConVRgeCompanionService.SERVICE_STOPPED = false;
+            startService();
+        }
 
         /////////////////////////////////
         // REGISTERS BROADCAST RECEIVER /
@@ -99,9 +102,9 @@ public class MainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         // TODO: This is a hack - fix this
         if (id == R.id.action_close_app) {
-            //Log.d(TAG, "Pressed");
-            finish();
             stopService();
+            finish();
+            finish();
             return true;
         }
 
@@ -121,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
 
     // TODO: This is a hack - fix this
     public void stopService(){
-        stopService(mServiceIntent);
+        stopService(new Intent(getApplicationContext(), ConVRgeCompanionService.class));
         ConVRgeCompanionService.SERVICE_STOPPED = true;
     }
 
