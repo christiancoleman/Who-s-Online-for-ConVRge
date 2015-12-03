@@ -1,7 +1,6 @@
 package enfieldacademy.convrgecompanion;
 
 import android.annotation.SuppressLint;
-import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -35,8 +34,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart(){
-        super.onStart();
+    protected void onDestroy() {
+        super.onDestroy();
+
+        /////////////////////////////////
+        //// STOPS THE SERVICE //////////
+        /////////////////////////////////
+        stopService();
     }
 
     // Reference: http://developer.android.com/images/training/basics/basic-lifecycle.png
@@ -78,8 +82,14 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(mServiceReceiver, intentFilter);
     }
 
+    // Reference: http://developer.android.com/guide/components/services.html
     public void startService(){
         startService(new Intent(this, ConVRgeCompanionService.class));
+    }
+
+    public void stopService(){
+        stopService(new Intent(this, ConVRgeCompanionService.class));
+        ConVRgeHelper.clearNotifications(this);
     }
 
     public class ConVRgeCompanionServiceReceiver extends BroadcastReceiver {

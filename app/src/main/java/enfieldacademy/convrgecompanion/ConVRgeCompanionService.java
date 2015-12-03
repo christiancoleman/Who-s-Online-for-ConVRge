@@ -29,10 +29,6 @@ import java.util.ArrayList;
 public class ConVRgeCompanionService extends IntentService{
 
     private final String TAG = "ConVRgeCompanionService";
-    private final String ENDPOINT = "http://www.convrge.co/api/users?watching=true";
-
-    public static final int NOTIFICATION_ID_STATIC = 31337;
-    public static final int NOTIFICATION_ID_DYNAMIC = 31338;
 
     public int mPauseDuration = 5000;
     public ConVRgeServer mOldServerObject;
@@ -58,7 +54,7 @@ public class ConVRgeCompanionService extends IntentService{
     @Override
     public void onDestroy() {
         super.onDestroy();
-        clearNotifications();
+        ConVRgeHelper.clearNotifications(this);
     }
 
     @Override
@@ -73,12 +69,6 @@ public class ConVRgeCompanionService extends IntentService{
             updateUIAndCreateNotifications();
             sleep(mPauseDuration);
         }
-    }
-
-    public void clearNotifications(){
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(ConVRgeCompanionService.NOTIFICATION_ID_DYNAMIC);
-        notificationManager.cancel(ConVRgeCompanionService.NOTIFICATION_ID_STATIC);
     }
 
     public void sleep(int duration){
@@ -100,7 +90,7 @@ public class ConVRgeCompanionService extends IntentService{
         String line;
 
         try {
-            url = new URL(ENDPOINT);
+            url = new URL(ConVRgeHelper.ENDPOINT);
         } catch (MalformedURLException e){
             // TODO: error handling
             Log.d(TAG, "queryServer1");
@@ -216,7 +206,7 @@ public class ConVRgeCompanionService extends IntentService{
         notification.flags = Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.notify(NOTIFICATION_ID_STATIC, notification);
+        notificationManager.notify(ConVRgeHelper.NOTIFICATION_ID_STATIC, notification);
         Log.d(TAG, "createOrUpdateStaticNotification() ENDED (Notification made/updated!)");
     }
 
@@ -251,7 +241,7 @@ public class ConVRgeCompanionService extends IntentService{
         Intent targetIntent = new Intent(c, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(c, 0, targetIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Uri notificationSound = Uri.parse("android.resource//" + getPackageName() + "/" + R.raw.player_joined_sound);
+        //Uri notificationSound = Uri.parse("android.resource//" + getPackageName() + "/" + R.raw.player_joined_sound);
 
         Notification notification = new NotificationCompat.Builder(c)
                 .setContentTitle("ConVRge - player online!")
@@ -259,13 +249,13 @@ public class ConVRgeCompanionService extends IntentService{
                 .setTicker(newPlayersString + " online now!")
                 .setSmallIcon(R.mipmap.friend_online)
                 .setColor(Color.BLACK)
-                .setDefaults(Notification.DEFAULT_SOUND)
+                //.setDefaults(Notification.DEFAULT_SOUND)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
                 .build();
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.notify(NOTIFICATION_ID_DYNAMIC, notification);
+        notificationManager.notify(ConVRgeHelper.NOTIFICATION_ID_DYNAMIC, notification);
         Log.d(TAG, "createNewPlayerOnlineNotifications() ENDED (Notification made!)");
     }
 
