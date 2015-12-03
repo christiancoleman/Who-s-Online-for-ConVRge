@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.SystemClock;
 import android.util.Log;
 
@@ -28,7 +29,11 @@ public class ConVRgeCompanionService extends IntentService{
 
     private final String TAG = "ConVRgeCompanionService";
     private final String ENDPOINT = "http://www.convrge.co/api/users";
-    private final int NOTIFICATION_ID = 12345;
+
+    public static final int NOTIFICATION_ID_STATIC = 31337;
+    public static final int NOTIFICATION_ID_DYNAMIC = 31338;
+
+    public static boolean SERVICE_STOPPED = false;
 
     public int mPauseDuration = 5000;
     public ConVRgeServer mOldServerObject;
@@ -70,7 +75,7 @@ public class ConVRgeCompanionService extends IntentService{
             parseResult();
             buildConVRgeServer();
             printResults();
-            updateUIorCreateNotifications();
+            updateUIAndCreateNotifications();
             sleep(mPauseDuration);
         }
     }
@@ -142,6 +147,7 @@ public class ConVRgeCompanionService extends IntentService{
         if(mConVRgeMainJSONObject == null || mPlayersOnlineJSONArray == null) {
             // TODO: error handling
             Log.d(TAG, "buildConVRgeServer1");
+            return;
         }
 
         int counter = 0;
@@ -173,12 +179,18 @@ public class ConVRgeCompanionService extends IntentService{
         mServerObject.print();
     }
 
-    public void updateUIorCreateNotifications(){
+    public void updateUIAndCreateNotifications(){
+        createOrUpdateStaticNotification();
         if(MyApplication.isActivityVisible()) {
             updateUI();
         } else {
-            createNotifications();
+            createNewPlayerOnlineNotifications();
             updateOldServerObject();
+        }
+        if(SERVICE_STOPPED) {
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.cancel(ConVRgeCompanionService.NOTIFICATION_ID_DYNAMIC);
+            notificationManager.cancel(ConVRgeCompanionService.NOTIFICATION_ID_STATIC);
         }
     }
 
@@ -188,8 +200,38 @@ public class ConVRgeCompanionService extends IntentService{
         newUIThread.start();
     }
 
-    public void createNotifications(){
-        Log.d(TAG, "createNotifications() STARTED");
+    public void createOrUpdateStaticNotification(){
+        Log.d(TAG, "createOrUpdateStaticNotification() STARTED");
+
+        ArrayList<ConVRgePlayer> playerList = mServerObject.getOnlineUsersList();
+        String allPlayersOnlineString = "";
+        for(ConVRgePlayer player : playerList){
+            if(allPlayersOnlineString.equals("")) allPlayersOnlineString = player.getPlayerName();
+            else allPlayersOnlineString += ", " + player.getPlayerName();
+        }
+
+        Context c = getApplicationContext();
+        Intent targetIntent = new Intent(c, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(c, 0, targetIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Notification notification = new NotificationCompat.Builder(c)
+                .setContentTitle("ConVRge - " + mServerObject.getNumUsersOnline() + " players online")
+                .setContentText(allPlayersOnlineString)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setColor(Color.BLACK)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
+                .build();
+
+        notification.flags = Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.notify(NOTIFICATION_ID_STATIC, notification);
+        Log.d(TAG, "createOrUpdateStaticNotification() ENDED (Notification made/updated!)");
+    }
+
+    public void createNewPlayerOnlineNotifications(){
+        Log.d(TAG, "createNewPlayerOnlineNotifications() STARTED");
 
         String newPlayersString = "";
         ArrayList<ConVRgePlayer> oldPlayersList = mOldServerObject.getOnlineUsersList();
@@ -211,7 +253,7 @@ public class ConVRgeCompanionService extends IntentService{
         }
 
         if(newPlayersString.equals("")) {
-            Log.d(TAG, "createNotifications() ENDED (Premature)");
+            Log.d(TAG, "createNewPlayerOnlineNotifications() ENDED (Premature) - i.e. No new players online.");
             return;
         }
 
@@ -220,16 +262,18 @@ public class ConVRgeCompanionService extends IntentService{
         PendingIntent pendingIntent = PendingIntent.getActivity(c, 0, targetIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Notification notification = new NotificationCompat.Builder(c)
-                .setContentTitle("Convrge - new player online!")
+                .setContentTitle("ConVRge - player online!")
                 .setContentText(newPlayersString)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setTicker(newPlayersString + " online now!")
+                .setSmallIcon(R.mipmap.friend_online)
+                .setColor(Color.BLACK)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
                 .build();
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.notify(NOTIFICATION_ID, notification);
-        Log.d(TAG, "createNotifications() ENDED (Notification made!)");
+        notificationManager.notify(NOTIFICATION_ID_DYNAMIC, notification);
+        Log.d(TAG, "createNewPlayerOnlineNotifications() ENDED (Notification made!)");
     }
 
     public void updateOldServerObject(){

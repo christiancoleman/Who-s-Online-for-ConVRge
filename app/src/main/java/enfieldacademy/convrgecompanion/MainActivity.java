@@ -1,6 +1,7 @@
 package enfieldacademy.convrgecompanion;
 
 import android.annotation.SuppressLint;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,14 +11,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final String TAG = "MainActivity";
+    private final String TAG = "ConVRgeMainActivity";
+
+    public static boolean serviceCancelled = false;
 
     public Intent mServiceIntent;
     public ConVRgeCompanionServiceReceiver mServiceReceiver;
@@ -95,7 +97,10 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_close_app) {
+            //Log.d(TAG, "Pressed");
+            finish();
+            stopService();
             return true;
         }
 
@@ -111,6 +116,11 @@ public class MainActivity extends AppCompatActivity {
     public void startService(){
         mServiceIntent = new Intent(this, ConVRgeCompanionService.class);
         startService(mServiceIntent);
+    }
+
+    public void stopService(){
+        stopService(mServiceIntent);
+        ConVRgeCompanionService.SERVICE_STOPPED = true;
     }
 
     public class ConVRgeCompanionServiceReceiver extends BroadcastReceiver {
