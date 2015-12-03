@@ -9,8 +9,6 @@ import android.content.IntentFilter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -19,9 +17,6 @@ public class MainActivity extends AppCompatActivity {
 
     private final String TAG = "ConVRgeMainActivity";
 
-    public static boolean serviceCancelled = false;
-
-    public Intent mServiceIntent;
     public ConVRgeCompanionServiceReceiver mServiceReceiver;
     public TextView mUsersOnlineTV;
     public TextView mUsersWatchingTV;
@@ -97,8 +92,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startService(){
-        mServiceIntent = new Intent(this, ConVRgeCompanionService.class);
-        startService(mServiceIntent);
+        startService(new Intent(this, ConVRgeCompanionService.class));
     }
 
     public void stopService(){

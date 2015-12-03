@@ -5,7 +5,5 @@
     <string name="users_watching">Querying server&#8230;</string>
     <string name="default_user_list"> </string>
 
-    <string name="action_close_app">EXIT</string>
-
     <string name="logo_description">Convrge Logo</string>
 </resources>
