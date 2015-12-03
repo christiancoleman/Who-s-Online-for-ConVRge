@@ -27,6 +27,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        /////////////////////////////////
+        //// STARTS THE SERVICE /////////
+        /////////////////////////////////
+        startService();
     }
 
     @Override
@@ -34,16 +39,14 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
     }
 
+    // Reference: http://developer.android.com/images/training/basics/basic-lifecycle.png
     @Override
     protected void onResume(){
         super.onResume();
 
         setContentView(R.layout.activity_main);
-
         setTitle("");
-
         mLocalServer = new ConVRgeServer();
-
         mUsersOnlineTV = (TextView) findViewById(R.id.users_online);
         mUsersWatchingTV = (TextView) findViewById(R.id.users_watching);
         mListOfUsersOnlineTV = (TextView) findViewById(R.id.list_of_online_users);
@@ -51,38 +54,22 @@ public class MainActivity extends AppCompatActivity {
         MyApplication.activityResumed();
 
         /////////////////////////////////
-        //// STARTS THE SERVICE /////////
-        /////////////////////////////////
-        if(!MyApplication.isServiceRunning()) {
-            startService();
-        }
-
-        /////////////////////////////////
         // REGISTERS BROADCAST RECEIVER /
         /////////////////////////////////
         registerReceiver();
     }
 
+    // Reference: http://developer.android.com/images/training/basics/basic-lifecycle.png
     @Override
     protected void onPause(){
         super.onPause();
 
         MyApplication.activityPaused();
 
-        mLocalServer = null;
-
+        //////////////////////////////////////
+        // UNREGISTERS BROADCAST RECEIVER ////
+        //////////////////////////////////////
         unregisterReceiver(mServiceReceiver);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
-        stopService();
-        super.onDestroy();
     }
 
     public void registerReceiver(){
@@ -93,13 +80,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void startService(){
         startService(new Intent(this, ConVRgeCompanionService.class));
-    }
-
-    public void stopService(){
-        stopService(new Intent(getApplicationContext(), ConVRgeCompanionService.class));
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(ConVRgeCompanionService.NOTIFICATION_ID_DYNAMIC);
-        notificationManager.cancel(ConVRgeCompanionService.NOTIFICATION_ID_STATIC);
     }
 
     public class ConVRgeCompanionServiceReceiver extends BroadcastReceiver {

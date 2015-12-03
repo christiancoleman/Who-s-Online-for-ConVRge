@@ -10,10 +10,6 @@ public class MyApplication extends Application {
         return activityVisible;
     }
 
-    public static boolean isServiceRunning(){
-        return serviceRunning;
-    }
-
     public static void activityResumed() {
         activityVisible = true;
     }
@@ -22,18 +18,7 @@ public class MyApplication extends Application {
         activityVisible = false;
     }
 
-    public static void serviceRunning() {
-        Log.d(TAG, "serviceRunning()");
-        serviceRunning = true;
-    }
-
-    public static void servicePaused() {
-        Log.d(TAG, "servicePaused()");
-        serviceRunning = false;
-    }
-
     private static final String TAG = "ConVRgeApplication";
     private static boolean activityVisible;
-    private static boolean serviceRunning;
 
 }

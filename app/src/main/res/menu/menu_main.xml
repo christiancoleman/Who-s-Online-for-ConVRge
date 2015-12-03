@@ -1,7 +1,20 @@
-<menu
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".MainActivity">
+    xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
+
+    <item android:id="@+id/action_duration"
+        android:title="@string/duration_setting"
+        android:orderInCategory="100"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/action_notifications"
+        android:title="@string/notification_setting"
+        android:orderInCategory="101"
+        app:showAsAction="never"/>
+
+    <item android:id="@+id/action_close"
+        android:title="@string/force_close_setting"
+        android:orderInCategory="102"
+        app:showAsAction="never"/>
 
 </menu>

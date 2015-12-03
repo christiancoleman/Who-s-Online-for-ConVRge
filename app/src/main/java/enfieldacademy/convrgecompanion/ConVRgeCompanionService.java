@@ -41,10 +41,6 @@ public class ConVRgeCompanionService extends IntentService{
     public JSONObject mConVRgeMainJSONObject = null;
     public JSONArray mPlayersOnlineJSONArray = null;
 
-    public ConVRgeCompanionService(String name) {
-        super(name);
-    }
-
     public ConVRgeCompanionService(){
         super("ConVRgeCompanionService");
     }
@@ -60,15 +56,9 @@ public class ConVRgeCompanionService extends IntentService{
     }
 
     @Override
-    public void onStart(Intent intent, int startId) {
-        super.onStart(intent, startId);
-        MyApplication.serviceRunning();
-    }
-
-    @Override
     public void onDestroy() {
-        MyApplication.servicePaused();
         super.onDestroy();
+        clearNotifications();
     }
 
     @Override
@@ -83,6 +73,12 @@ public class ConVRgeCompanionService extends IntentService{
             updateUIAndCreateNotifications();
             sleep(mPauseDuration);
         }
+    }
+
+    public void clearNotifications(){
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(ConVRgeCompanionService.NOTIFICATION_ID_DYNAMIC);
+        notificationManager.cancel(ConVRgeCompanionService.NOTIFICATION_ID_STATIC);
     }
 
     public void sleep(int duration){
@@ -263,7 +259,7 @@ public class ConVRgeCompanionService extends IntentService{
                 .setTicker(newPlayersString + " online now!")
                 .setSmallIcon(R.mipmap.friend_online)
                 .setColor(Color.BLACK)
-                .setSound(notificationSound)
+                .setDefaults(Notification.DEFAULT_SOUND)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
                 .build();

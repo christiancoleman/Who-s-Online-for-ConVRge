@@ -1,9 +1,16 @@
 <resources>
     <string name="app_name">ConVRge Companion</string>
 
+    <!-- UI strings -->
     <string name="users_online"> </string>
     <string name="users_watching">Querying server&#8230;</string>
     <string name="default_user_list"> </string>
 
+    <!-- menu strings -->
+    <string name="duration_setting">Set Duration</string>
+    <string name="notification_setting">Notifications</string>
+    <string name="force_close_setting">Close Companion</string>
+
+    <!-- obligatory image descriptions -->
     <string name="logo_description">Convrge Logo</string>
 </resources>
