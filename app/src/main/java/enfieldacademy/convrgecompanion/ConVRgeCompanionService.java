@@ -28,7 +28,7 @@ import java.util.ArrayList;
 public class ConVRgeCompanionService extends IntentService{
 
     private final String TAG = "ConVRgeCompanionService";
-    private final String ENDPOINT = "http://www.convrge.co/api/users";
+    private final String ENDPOINT = "http://www.convrge.co/api/users?watching=true";
 
     public static final int NOTIFICATION_ID_STATIC = 31337;
     public static final int NOTIFICATION_ID_DYNAMIC = 31338;
