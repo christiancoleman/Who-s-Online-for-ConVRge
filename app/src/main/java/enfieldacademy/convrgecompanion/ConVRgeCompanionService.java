@@ -33,9 +33,6 @@ public class ConVRgeCompanionService extends IntentService{
     public static final int NOTIFICATION_ID_STATIC = 31337;
     public static final int NOTIFICATION_ID_DYNAMIC = 31338;
 
-    // TODO: This is a hack - fix this
-    public static boolean SERVICE_STOPPED = false;
-
     public int mPauseDuration = 5000;
     public ConVRgeServer mOldServerObject;
     public ConVRgeServer mServerObject;
@@ -64,6 +61,13 @@ public class ConVRgeCompanionService extends IntentService{
     @Override
     public void onStart(Intent intent, int startId) {
         super.onStart(intent, startId);
+        MyApplication.serviceRunning();
+    }
+
+    @Override
+    public void onDestroy() {
+        MyApplication.servicePaused();
+        super.onDestroy();
     }
 
     @Override
@@ -71,7 +75,6 @@ public class ConVRgeCompanionService extends IntentService{
         //noinspection InfiniteLoopStatement
         while(true){
             Log.d(TAG, "=============================================================");
-            MyApplication.serviceRunning();
             queryServer();
             parseResult();
             buildConVRgeServer();
@@ -85,12 +88,6 @@ public class ConVRgeCompanionService extends IntentService{
         Log.d(TAG, "=============================================================");
         SystemClock.sleep(duration);
         Log.d(TAG, mPauseDuration / 1000 + " seconds has passed"); // 1000 is # ms = 1 second
-    }
-
-    @Override
-    public boolean onUnbind(Intent intent) {
-        MyApplication.servicePaused();
-        return super.onUnbind(intent);
     }
 
     public void createServerObjects(){
@@ -187,12 +184,6 @@ public class ConVRgeCompanionService extends IntentService{
         } else {
             createNewPlayerOnlineNotifications();
             updateOldServerObject();
-        }
-        // TODO: This is a hack - fix this
-        if(SERVICE_STOPPED) {
-            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            notificationManager.cancel(ConVRgeCompanionService.NOTIFICATION_ID_DYNAMIC);
-            notificationManager.cancel(ConVRgeCompanionService.NOTIFICATION_ID_STATIC);
         }
     }
 

@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
         //// STARTS THE SERVICE /////////
         /////////////////////////////////
         if(!MyApplication.isServiceRunning()) {
-            ConVRgeCompanionService.SERVICE_STOPPED = false;
             startService();
         }
 
@@ -86,29 +85,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        // TODO: This is a hack - fix this
-        if (id == R.id.action_close_app) {
-            stopService();
-            finish();
-            finish();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+    protected void onDestroy() {
+        stopService();
+        super.onDestroy();
     }
 
     public void registerReceiver(){
@@ -122,10 +101,11 @@ public class MainActivity extends AppCompatActivity {
         startService(mServiceIntent);
     }
 
-    // TODO: This is a hack - fix this
     public void stopService(){
         stopService(new Intent(getApplicationContext(), ConVRgeCompanionService.class));
-        ConVRgeCompanionService.SERVICE_STOPPED = true;
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(ConVRgeCompanionService.NOTIFICATION_ID_DYNAMIC);
+        notificationManager.cancel(ConVRgeCompanionService.NOTIFICATION_ID_STATIC);
     }
 
     public class ConVRgeCompanionServiceReceiver extends BroadcastReceiver {
