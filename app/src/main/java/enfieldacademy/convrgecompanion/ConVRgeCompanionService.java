@@ -33,6 +33,7 @@ public class ConVRgeCompanionService extends IntentService{
     public static final int NOTIFICATION_ID_STATIC = 31337;
     public static final int NOTIFICATION_ID_DYNAMIC = 31338;
 
+    // TODO: This is a hack - fix this
     public static boolean SERVICE_STOPPED = false;
 
     public int mPauseDuration = 5000;
@@ -187,6 +188,7 @@ public class ConVRgeCompanionService extends IntentService{
             createNewPlayerOnlineNotifications();
             updateOldServerObject();
         }
+        // TODO: This is a hack - fix this
         if(SERVICE_STOPPED) {
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.cancel(ConVRgeCompanionService.NOTIFICATION_ID_DYNAMIC);

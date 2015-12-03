@@ -97,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
+        // TODO: This is a hack - fix this
         if (id == R.id.action_close_app) {
             //Log.d(TAG, "Pressed");
             finish();
@@ -118,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
         startService(mServiceIntent);
     }
 
+    // TODO: This is a hack - fix this
     public void stopService(){
         stopService(mServiceIntent);
         ConVRgeCompanionService.SERVICE_STOPPED = true;
