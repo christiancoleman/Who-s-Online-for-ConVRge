@@ -8,6 +8,10 @@ import android.content.IntentFilter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -25,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate() called");
         super.onCreate(savedInstanceState);
 
         /////////////////////////////////
@@ -35,17 +40,90 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
-
         /////////////////////////////////
         //// STOPS THE SERVICE //////////
         /////////////////////////////////
         stopService();
+
+        Log.d(TAG, "onDestroy() called");
+        
+        super.onDestroy();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_duration:
+                durationMenuAction();
+                return true;
+            case R.id.action_notifications:
+                notificationMenuAction();
+                return true;
+            case R.id.action_close:
+                closeMenuAction();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)  {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+            Log.d("CDA", "onKeyDown Called");
+            onBackPressed();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Log.d("CDA", "onBackPressed Called");
+        Intent setIntent = new Intent(Intent.ACTION_MAIN);
+        setIntent.addCategory(Intent.CATEGORY_HOME);
+        setIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(setIntent);
+    }
+
+    public void durationMenuAction(){
+        Log.d(TAG, "durationMenuAction()");
+    }
+
+    public void notificationMenuAction(){
+        Log.d(TAG, "notificationMenuAction()");
+    }
+
+    public void closeMenuAction(){
+        Log.d(TAG, "closeMenuAction()");
+        finish();
+    }
+
+    // Reference: http://developer.android.com/guide/components/services.html
+    public void startService(){
+        Log.d(TAG, "startService() called");
+        MyApplication.serviceStarted();
+        getApplicationContext().startService(new Intent(this, ConVRgeCompanionService.class));
+    }
+
+    public void stopService(){
+        Log.d(TAG, "stopService() called");
+        MyApplication.serviceEnded();
+        getApplicationContext().stopService(new Intent(this, ConVRgeCompanionService.class));
+        ConVRgeHelper.clearNotifications(this);
     }
 
     // Reference: http://developer.android.com/images/training/basics/basic-lifecycle.png
     @Override
     protected void onResume(){
+        Log.d(TAG, "onResume() called");
         super.onResume();
 
         setContentView(R.layout.activity_main);
@@ -66,6 +144,7 @@ public class MainActivity extends AppCompatActivity {
     // Reference: http://developer.android.com/images/training/basics/basic-lifecycle.png
     @Override
     protected void onPause(){
+        Log.d(TAG, "onPause() called");
         super.onPause();
 
         MyApplication.activityPaused();
@@ -82,16 +161,6 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(mServiceReceiver, intentFilter);
     }
 
-    // Reference: http://developer.android.com/guide/components/services.html
-    public void startService(){
-        startService(new Intent(this, ConVRgeCompanionService.class));
-    }
-
-    public void stopService(){
-        stopService(new Intent(this, ConVRgeCompanionService.class));
-        ConVRgeHelper.clearNotifications(this);
-    }
-
     public class ConVRgeCompanionServiceReceiver extends BroadcastReceiver {
 
         private final String TAG = "ConVRgeServiceReceiver";
@@ -99,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
         @SuppressLint("SetTextI18n")
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d(TAG, "onReceive called!");
+            //Log.d(TAG, "onReceive called!");
             Bundle extras = intent.getExtras();
             if(extras != null) {
                 mLocalServer.setNumUsersOnline(extras.getInt("USERS_ONLINE"));
@@ -123,9 +192,9 @@ public class MainActivity extends AppCompatActivity {
                             + mLocalServer.getOnlineUsersList().get(i).getPlayerName());
                 }
 
-                Log.d(TAG, "***");
-                mLocalServer.print();
-                Log.d(TAG, "***");
+                //Log.d(TAG, "***");
+                //mLocalServer.print();
+                //Log.d(TAG, "***");
             }
         }
     }
