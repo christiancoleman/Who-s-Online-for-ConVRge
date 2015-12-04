@@ -1,16 +1,15 @@
 package enfieldacademy.convrgecompanion;
 
 import android.app.Application;
-import android.util.Log;
 
 // http://stackoverflow.com/questions/18038399/how-to-check-if-activity-is-in-foreground-or-in-visible-background
 public class MyApplication extends Application {
 
-    private static final String TAG = "ConVRgeApplication";
     private static boolean activityVisible;
     private static boolean serviceStarted;
     private static boolean notificationsOn;
     private static boolean notificationSoundsOn;
+    private static ConVRgeServer savedServer;
 
     public static boolean isActivityVisible() {
         return activityVisible;
@@ -58,6 +57,14 @@ public class MyApplication extends Application {
 
     public static void notificationSoundsOff(){
         notificationSoundsOn = false;
+    }
+
+    public static ConVRgeServer getSavedServer(){
+        return savedServer;
+    }
+
+    public static void setSavedServer(ConVRgeServer server){
+        savedServer = new ConVRgeServer(server);
     }
 
 }

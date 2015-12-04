@@ -119,7 +119,8 @@ public class MainActivity extends AppCompatActivity {
                 })
                 .setNegativeButton(notificationSoundsToggle, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        if(MyApplication.areNotificationSoundsOn()) MyApplication.notificationSoundsOff();
+                        if (MyApplication.areNotificationSoundsOn())
+                            MyApplication.notificationSoundsOff();
                         else MyApplication.notificationSoundsOn();
                     }
                 });
@@ -153,19 +154,19 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onResume() called");
         super.onResume();
 
+        /////////////////////////////////
+        // REGISTERS BROADCAST RECEIVER /
+        /////////////////////////////////
+        registerReceiver();
+
+        restoreState();
+
         setContentView(R.layout.activity_main);
         setTitle("");
         mLocalServer = new ConVRgeServer();
         mUsersOnlineTV = (TextView) findViewById(R.id.users_online);
         mUsersWatchingTV = (TextView) findViewById(R.id.users_watching);
         mListOfUsersOnlineTV = (TextView) findViewById(R.id.list_of_online_users);
-
-        MyApplication.activityResumed();
-
-        /////////////////////////////////
-        // REGISTERS BROADCAST RECEIVER /
-        /////////////////////////////////
-        registerReceiver();
     }
 
     // Reference: http://developer.android.com/images/training/basics/basic-lifecycle.png
@@ -174,12 +175,24 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onPause() called");
         super.onPause();
 
-        MyApplication.activityPaused();
+        saveState();
 
         //////////////////////////////////////
         // UNREGISTERS BROADCAST RECEIVER ////
         //////////////////////////////////////
         unregisterReceiver(mServiceReceiver);
+    }
+
+    public void restoreState(){
+        MyApplication.activityResumed();
+        if(MyApplication.getSavedServer() == null) mLocalServer = new ConVRgeServer();
+        else mLocalServer = MyApplication.getSavedServer();
+
+    }
+
+    public void saveState(){
+        MyApplication.setSavedServer(mLocalServer);
+        MyApplication.activityPaused();
     }
 
     public void registerReceiver(){

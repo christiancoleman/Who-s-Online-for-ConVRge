@@ -39,7 +39,6 @@ public class ConVRgeCompanionService extends Service {
 
     private final String TAG = "ConVRgeCompanionService";
 
-    public int mPauseDuration = 5000;
     public ConVRgeServer mOldServerObject;
     public ConVRgeServer mServerObject;
     public String mResultString;
@@ -70,7 +69,7 @@ public class ConVRgeCompanionService extends Service {
                 buildConVRgeServer();
                 printResults();
                 updateUIAndCreateNotifications();
-                sleep(mPauseDuration);
+                sleep(ConVRgeHelper.PAUSE_DURATION);
             }
 
             Log.d(TAG, "Do we make it here?");
@@ -219,7 +218,7 @@ public class ConVRgeCompanionService extends Service {
     }
 
     public void updateUIAndCreateNotifications(){
-        createOrUpdateStaticNotification();
+        updatePersistentNotification();
         if(MyApplication.isActivityVisible()) {
             updateUI();
         } else {
@@ -234,8 +233,8 @@ public class ConVRgeCompanionService extends Service {
         newUIThread.start();
     }
 
-    public void createOrUpdateStaticNotification(){
-        //Log.d(TAG, "createOrUpdateStaticNotification() STARTED");
+    public void updatePersistentNotification(){
+        //Log.d(TAG, "createOrUpdatePersistentNotification() STARTED");
 
         ArrayList<ConVRgePlayer> playerList = mServerObject.getOnlineUsersList();
         String allPlayersOnlineString = "";
@@ -260,14 +259,17 @@ public class ConVRgeCompanionService extends Service {
         notification.flags = Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.notify(ConVRgeHelper.NOTIFICATION_ID_STATIC, notification);
+        notificationManager.notify(ConVRgeHelper.NOTIFICATION_ID_ALL_PLAYERS_PERSISTENT, notification);
         //Log.d(TAG, "createOrUpdateStaticNotification() ENDED (Notification made/updated!)");
     }
 
     public void createNewPlayerOnlineNotifications(){
         //Log.d(TAG, "createNewPlayerOnlineNotifications() STARTED");
 
-        if(!MyApplication.areNotificationsOn()) return;
+        if(!MyApplication.areNotificationsOn()) {
+            ConVRgeHelper.clearIndividualPlayerNotifications(this);
+            return;
+        }
 
         String newPlayersString = "";
         ArrayList<ConVRgePlayer> oldPlayersList = mOldServerObject.getOnlineUsersList();
@@ -290,6 +292,7 @@ public class ConVRgeCompanionService extends Service {
 
         if(newPlayersString.equals("")) {
             //Log.d(TAG, "createNewPlayerOnlineNotifications() ENDED (Premature) - i.e. No new players online.");
+            ConVRgeHelper.clearIndividualPlayerNotifications(this);
             return;
         }
 
@@ -313,31 +316,22 @@ public class ConVRgeCompanionService extends Service {
                 .build();
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.notify(ConVRgeHelper.NOTIFICATION_ID_DYNAMIC, notification);
+        notificationManager.notify(ConVRgeHelper.NOTIFICATION_ID_INDIVIDUAL_PLAYERS, notification);
         //Log.d(TAG, "createNewPlayerOnlineNotifications() ENDED (Notification made!)");
     }
 
     public void updateOldServerObject(){
         //Log.d(TAG, "updateOldServerObject()");
-        ArrayList<ConVRgePlayer> serverList = new ArrayList<>();
-        for(int i = 0; i < mServerObject.getOnlineUsersList().size(); i++){
-            ConVRgePlayer player = mServerObject.getOnlineUsersList().get(i);
-            serverList.add(new ConVRgePlayer(player.getId(), player.getPlayerName()));
-        }
-        mOldServerObject.setOnlineUsersList(serverList);
-        mOldServerObject.setNumUsersOnline(mServerObject.getNumUsersOnline());
-        mOldServerObject.setNumUsersWatching(mServerObject.getNumUsersWatching());
+        mOldServerObject = new ConVRgeServer(mServerObject);
     }
 
     public void sleep(int duration){
         //Log.d(TAG, "=============================================================");
         SystemClock.sleep(duration);
-        Log.d(TAG, mPauseDuration / 1000 + " seconds has passed"); // 1000 is # ms = 1 second
+        Log.d(TAG, ConVRgeHelper.PAUSE_DURATION / 1000 + " seconds has passed"); // 1000 is # ms = 1 second
     }
 
     public class ConVRgeUIThread extends Thread{
-
-        private final String TAG = "ConVRgeUIThread";
 
         @Override
         public void run() {

@@ -15,7 +15,18 @@ public class ConVRgeServer implements Serializable{
 
     public ConVRgeServer(){
         setOnlineUsersList(new ArrayList<ConVRgePlayer>());
+        setNumUsersOnline(0);
         setNumUsersWatching(0);
+    }
+
+    public ConVRgeServer(ArrayList<ConVRgePlayer> playerList, int numUsersOnline, int numUsersWatching){
+        setOnlineUsersList(playerList);
+        setNumUsersOnline(numUsersOnline);
+        setNumUsersWatching(numUsersWatching);
+    }
+
+    public ConVRgeServer(ConVRgeServer server){
+        this(new ArrayList<>(server.cloneList()), server.getNumUsersOnline(), server.getNumUsersWatching());
     }
 
     public ArrayList<ConVRgePlayer> getOnlineUsersList() {
@@ -42,10 +53,18 @@ public class ConVRgeServer implements Serializable{
         this.mNumUsersOnline = numUsersOnline;
     }
 
+    public ArrayList<ConVRgePlayer> cloneList(){
+        ArrayList<ConVRgePlayer> clonedPlayerList = new ArrayList<>();
+        for(ConVRgePlayer player : this.getOnlineUsersList()){
+            clonedPlayerList.add(new ConVRgePlayer(player));
+        }
+        return clonedPlayerList;
+    }
+
     public void print(){
         for(int i = 0; i < getOnlineUsersList().size(); i++){
             ConVRgePlayer player = getOnlineUsersList().get(i);
-            Log.d(TAG, (i+1) + ". " + player.getPlayerName() + " (" + player.getId() + ")");
+            Log.d(TAG, (i + 1) + ". " + player.getPlayerName() + " (" + player.getId() + ")");
         }
         Log.d(TAG, getNumUsersOnline() + " users online.");
         Log.d(TAG, getNumUsersWatching() + " users watching.");

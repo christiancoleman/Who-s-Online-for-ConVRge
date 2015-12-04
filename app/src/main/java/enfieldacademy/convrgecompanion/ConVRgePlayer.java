@@ -10,6 +10,10 @@ public class ConVRgePlayer {
         setPlayerName(playerName);
     }
 
+    public ConVRgePlayer(ConVRgePlayer player){
+        this(player.getId(), player.getPlayerName());
+    }
+
     public int getId() {
         return mId;
     }
