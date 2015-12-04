@@ -7,6 +7,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Looper;
 import android.os.Handler;
@@ -266,6 +267,8 @@ public class ConVRgeCompanionService extends Service {
     public void createNewPlayerOnlineNotifications(){
         //Log.d(TAG, "createNewPlayerOnlineNotifications() STARTED");
 
+        if(!MyApplication.areNotificationsOn()) return;
+
         String newPlayersString = "";
         ArrayList<ConVRgePlayer> oldPlayersList = mOldServerObject.getOnlineUsersList();
         ArrayList<ConVRgePlayer> newPlayersList = mServerObject.getOnlineUsersList();
@@ -294,7 +297,10 @@ public class ConVRgeCompanionService extends Service {
         Intent targetIntent = new Intent(c, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(c, 0, targetIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        //Uri notificationSound = Uri.parse("android.resource//" + getPackageName() + "/" + R.raw.player_joined_sound);
+        if(MyApplication.areNotificationSoundsOn()) {
+            MediaPlayer mp = MediaPlayer.create(this, R.raw.player_joined_sound);
+            mp.start();
+        }
 
         Notification notification = new NotificationCompat.Builder(c)
                 .setContentTitle("ConVRge - player online!")
@@ -302,7 +308,6 @@ public class ConVRgeCompanionService extends Service {
                 .setTicker(newPlayersString + " online now!")
                 .setSmallIcon(R.mipmap.friend_online)
                 .setColor(Color.BLACK)
-                //.setDefaults(Notification.DEFAULT_SOUND)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
                 .build();

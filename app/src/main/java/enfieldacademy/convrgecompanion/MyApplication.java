@@ -9,6 +9,8 @@ public class MyApplication extends Application {
     private static final String TAG = "ConVRgeApplication";
     private static boolean activityVisible;
     private static boolean serviceStarted;
+    private static boolean notificationsOn;
+    private static boolean notificationSoundsOn;
 
     public static boolean isActivityVisible() {
         return activityVisible;
@@ -32,6 +34,30 @@ public class MyApplication extends Application {
 
     public static void serviceEnded(){
         serviceStarted = false;
+    }
+
+    public static boolean areNotificationsOn(){
+        return notificationsOn;
+    }
+
+    public static void notificationsOn() {
+        notificationsOn = true;
+    }
+
+    public static void notificationsOff(){
+        notificationsOn = false;
+    }
+
+    public static boolean areNotificationSoundsOn(){
+        return notificationSoundsOn;
+    }
+
+    public static void notificationSoundsOn(){
+        notificationSoundsOn = true;
+    }
+
+    public static void notificationSoundsOff(){
+        notificationSoundsOn = false;
     }
 
 }

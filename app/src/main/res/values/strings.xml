@@ -7,8 +7,11 @@
     <string name="default_user_list"> </string>
 
     <!-- menu strings -->
-    <string name="duration_setting">Set Duration</string>
     <string name="notification_setting">Notifications</string>
+    <string name="notification_sounds_on">Sounds On</string>
+    <string name="notification_sounds_off">Sounds Off</string>
+    <string name="notifications_on">Notifications On</string>
+    <string name="notifications_off">Notifications Off</string>
     <string name="force_close_setting">Close Companion</string>
 
     <!-- obligatory image descriptions -->

@@ -1,8 +1,10 @@
 package enfieldacademy.convrgecompanion;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v7.app.AppCompatActivity;
@@ -36,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
         //// STARTS THE SERVICE /////////
         /////////////////////////////////
         startService();
+
+        MyApplication.notificationsOn();
+        MyApplication.notificationSoundsOn();
     }
 
     @Override
@@ -46,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         stopService();
 
         Log.d(TAG, "onDestroy() called");
-        
+
         super.onDestroy();
     }
 
@@ -60,9 +65,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_duration:
-                durationMenuAction();
-                return true;
             case R.id.action_notifications:
                 notificationMenuAction();
                 return true;
@@ -93,12 +95,37 @@ public class MainActivity extends AppCompatActivity {
         startActivity(setIntent);
     }
 
-    public void durationMenuAction(){
-        Log.d(TAG, "durationMenuAction()");
-    }
-
     public void notificationMenuAction(){
         Log.d(TAG, "notificationMenuAction()");
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        String notificationsToggle;
+        String notificationSoundsToggle;
+        if(MyApplication.areNotificationsOn()){
+            notificationsToggle = getResources().getString(R.string.notifications_on);
+        } else {
+            notificationsToggle = getResources().getString(R.string.notifications_off);
+        }
+        if(MyApplication.areNotificationSoundsOn()){
+            notificationSoundsToggle = getResources().getString(R.string.notification_sounds_on);
+        } else {
+            notificationSoundsToggle = getResources().getString(R.string.notification_sounds_off);
+        }
+        builder.setMessage(R.string.notification_setting)
+                .setPositiveButton(notificationsToggle, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        if(MyApplication.areNotificationsOn()) MyApplication.notificationsOff();
+                        else MyApplication.notificationsOn();
+                    }
+                })
+                .setNegativeButton(notificationSoundsToggle, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        if(MyApplication.areNotificationSoundsOn()) MyApplication.notificationSoundsOff();
+                        else MyApplication.notificationSoundsOn();
+                    }
+                });
+        Log.d(TAG, "right before builder.create()");
+        builder.create();
+        builder.show();
     }
 
     public void closeMenuAction(){
