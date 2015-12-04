@@ -19,7 +19,7 @@
 
     <TextView
         android:id="@+id/users_online"
-        android:text="@string/users_online"
+        android:text="@string/default_users_online"
         android:textSize="@dimen/header_size"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -28,7 +28,7 @@
 
     <TextView
         android:id="@+id/users_watching"
-        android:text="@string/users_watching"
+        android:text="@string/default_users_watching"
         android:textSize="@dimen/header_size"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -2,9 +2,13 @@
     <string name="app_name">ConVRge Companion</string>
 
     <!-- UI strings -->
-    <string name="users_online"> </string>
-    <string name="users_watching">Querying server&#8230;</string>
+    <string name="default_users_online"> </string>
+    <string name="default_users_watching">Querying server&#8230;</string>
     <string name="default_user_list"> </string>
+    <string name="users_online_textview">%d users online</string>
+    <string name="users_watching_textview">%d users watching</string>
+    <string name="users_list_textview_start">%s</string>
+    <string name="users_list_textview_more">, %s</string>
 
     <!-- menu strings -->
     <string name="notification_setting">Notifications</string>

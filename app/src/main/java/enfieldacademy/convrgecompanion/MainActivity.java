@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     public TextView mListOfUsersOnlineTV;
 
     private ConVRgeServer mLocalServer;
+    private Toast mToast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,15 +115,26 @@ public class MainActivity extends AppCompatActivity {
         builder.setMessage(R.string.notification_setting)
                 .setPositiveButton(notificationsToggle, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        if(MyApplication.areNotificationsOn()) MyApplication.notificationsOff();
-                        else MyApplication.notificationsOn();
+                        if(MyApplication.areNotificationsOn()) {
+                            MyApplication.notificationsOff();
+                            showToast(getResources().getString(R.string.notifications_off));
+                        }
+                        else {
+                            MyApplication.notificationsOn();
+                            showToast(getResources().getString(R.string.notifications_on));
+                        }
                     }
                 })
                 .setNegativeButton(notificationSoundsToggle, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        if (MyApplication.areNotificationSoundsOn())
+                        if (MyApplication.areNotificationSoundsOn()) {
                             MyApplication.notificationSoundsOff();
-                        else MyApplication.notificationSoundsOn();
+                            showToast(getResources().getString(R.string.notification_sounds_off));
+                        }
+                        else {
+                            MyApplication.notificationSoundsOn();
+                            showToast(getResources().getString(R.string.notification_sounds_on));
+                        }
                     }
                 });
         Log.d(TAG, "right before builder.create()");
@@ -154,19 +167,21 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onResume() called");
         super.onResume();
 
-        /////////////////////////////////
-        // REGISTERS BROADCAST RECEIVER /
-        /////////////////////////////////
+        ///////////////////////////////////////
+        // REGISTERS BROADCAST RECEIVER ///////
+        ///////////////////////////////////////
         registerReceiver();
 
+        ////////////////////////////////////////
+        // RESTORES STATE OR STARTS NEW STATE //
+        ////////////////////////////////////////
         restoreState();
 
         setContentView(R.layout.activity_main);
+
         setTitle("");
-        mLocalServer = new ConVRgeServer();
-        mUsersOnlineTV = (TextView) findViewById(R.id.users_online);
-        mUsersWatchingTV = (TextView) findViewById(R.id.users_watching);
-        mListOfUsersOnlineTV = (TextView) findViewById(R.id.list_of_online_users);
+
+        updateUI();
     }
 
     // Reference: http://developer.android.com/images/training/basics/basic-lifecycle.png
@@ -220,22 +235,37 @@ public class MainActivity extends AppCompatActivity {
                     temp.add(new ConVRgePlayer(id, name));
                 }
                 mLocalServer.setOnlineUsersList(temp);
-
-                mUsersOnlineTV.setText(mLocalServer.getNumUsersOnline() + " users online");
-                mUsersWatchingTV.setText(mLocalServer.getNumUsersWatching() + " users watching");
-                mListOfUsersOnlineTV.setText("");
-                for(int i = 0; i < mLocalServer.getOnlineUsersList().size(); i++){
-                    String optionalText = "";
-                    if(i != 0) optionalText = ", ";
-                    mListOfUsersOnlineTV.setText(mListOfUsersOnlineTV.getText()
-                            + optionalText
-                            + mLocalServer.getOnlineUsersList().get(i).getPlayerName());
-                }
-
-                //Log.d(TAG, "***");
-                //mLocalServer.print();
-                //Log.d(TAG, "***");
+                updateUI();
             }
         }
+    }
+
+    public void updateUI(){
+        mUsersOnlineTV = (TextView) findViewById(R.id.users_online);
+        mUsersWatchingTV = (TextView) findViewById(R.id.users_watching);
+        mListOfUsersOnlineTV = (TextView) findViewById(R.id.list_of_online_users);
+
+        String online = getResources().getString(R.string.users_online_textview);
+        String watching = getResources().getString(R.string.users_watching_textview);
+
+        mUsersOnlineTV.setText(String.format(online, mLocalServer.getNumUsersOnline()));
+        mUsersWatchingTV.setText(String.format(watching, mLocalServer.getNumUsersWatching()));
+        mListOfUsersOnlineTV.setText("");
+        for(int i = 0; i < mLocalServer.getOnlineUsersList().size(); i++){
+            String name;
+            if(i == 0) name = String.format(getResources().getString(R.string.users_list_textview_start), mLocalServer.getOnlineUsersList().get(i).getPlayerName());
+            else name = String.format(getResources().getString(R.string.users_list_textview_more), mLocalServer.getOnlineUsersList().get(i).getPlayerName());
+            mListOfUsersOnlineTV.setText(mListOfUsersOnlineTV.getText() + name);
+        }
+
+        //Log.d(TAG, "***");
+        //mLocalServer.print();
+        //Log.d(TAG, "***");
+    }
+
+    public void showToast(String s){
+        if(mToast != null) mToast.cancel();
+        mToast = Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT);
+        mToast.show();
     }
 }
