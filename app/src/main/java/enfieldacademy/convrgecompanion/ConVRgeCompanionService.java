@@ -236,6 +236,8 @@ public class ConVRgeCompanionService extends Service {
     public void updatePersistentNotification(){
         //Log.d(TAG, "createOrUpdatePersistentNotification() STARTED");
 
+        if(mServerObject.getNumUsersOnline() == 0) ConVRgeHelper.clearIndividualPlayerNotifications(this);
+
         ArrayList<ConVRgePlayer> playerList = mServerObject.getOnlineUsersList();
         String allPlayersOnlineString = "";
         for(ConVRgePlayer player : playerList){
@@ -292,7 +294,6 @@ public class ConVRgeCompanionService extends Service {
 
         if(newPlayersString.equals("")) {
             //Log.d(TAG, "createNewPlayerOnlineNotifications() ENDED (Premature) - i.e. No new players online.");
-            ConVRgeHelper.clearIndividualPlayerNotifications(this);
             return;
         }
 
