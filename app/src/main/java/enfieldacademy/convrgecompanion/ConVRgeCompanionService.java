@@ -255,7 +255,7 @@ public class ConVRgeCompanionService extends Service {
                 .setContentText(allPlayersOnlineString)
                 .setColor(Color.BLACK)
                 .setContentIntent(pendingIntent)
-                .setAutoCancel(true)
+                .setAutoCancel(false)
                 .build();
 
         notification.flags = Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
@@ -271,7 +271,7 @@ public class ConVRgeCompanionService extends Service {
         //////////////////////////////////////////////////
         startForeground(ConVRgeHelper.NOTIFICATION_ID_ALL_PLAYERS_PERSISTENT, notification);
 
-        //Log.d(TAG, "createOrUpdateStaticNotification() ENDED (Notification made/updated!)");
+        Log.d(TAG, "createOrUpdateStaticNotification() ENDED (Notification made/updated!)");
     }
 
     public void createNewPlayerOnlineNotifications(){
@@ -355,7 +355,6 @@ public class ConVRgeCompanionService extends Service {
                 intent.putExtra(i + "-name", mServerObject.getOnlineUsersList().get(i).getPlayerName());
             }
             sendBroadcast(intent);
-            stopSelf();
         }
     }
 }
