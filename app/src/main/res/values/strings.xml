@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ConVRge Companion</string>
+    <string name="app_name">Who\'s Online for ConVRge</string>
 
     <!-- UI strings -->
     <string name="default_users_online"> </string>

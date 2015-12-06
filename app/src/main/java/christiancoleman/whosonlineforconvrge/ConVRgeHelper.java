@@ -1,4 +1,4 @@
-package enfieldacademy.convrgecompanion;
+package christiancoleman.whosonlineforconvrge;
 
 import android.app.NotificationManager;
 import android.content.Context;

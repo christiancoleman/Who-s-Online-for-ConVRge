@@ -1,4 +1,4 @@
-package enfieldacademy.convrgecompanion;
+package christiancoleman.whosonlineforconvrge;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -212,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void registerReceiver(){
         mServiceReceiver = new ConVRgeCompanionServiceReceiver();
-        IntentFilter intentFilter = new IntentFilter("com.enfieldacademy.CUSTOM_INTENT");
+        IntentFilter intentFilter = new IntentFilter("com.info.christiancoleman.CUSTOM_INTENT");
         registerReceiver(mServiceReceiver, intentFilter);
     }
 

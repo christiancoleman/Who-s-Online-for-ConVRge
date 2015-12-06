@@ -1,4 +1,4 @@
-package enfieldacademy.convrgecompanion;
+package christiancoleman.whosonlineforconvrge;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -136,7 +136,7 @@ public class ConVRgeCompanionService extends Service {
 
     public void queryServer(){
         URL url = null;
-        HttpURLConnection connection;
+        HttpURLConnection connection = null;
         InputStream in;
         StringBuilder total = new StringBuilder();
         String line;
@@ -160,6 +160,10 @@ public class ConVRgeCompanionService extends Service {
         } catch (IOException e){
             // TODO: error handling
             //Log.d(TAG, "queryServer2");
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
         }
 
         mResultString = total.toString();
@@ -346,7 +350,7 @@ public class ConVRgeCompanionService extends Service {
         public void run() {
             //Log.d(TAG, "This is being called at least.");
             Intent intent = new Intent();
-            intent.setAction("com.enfieldacademy.CUSTOM_INTENT");
+            intent.setAction("com.info.christiancoleman.CUSTOM_INTENT");
             intent.putExtra("USERS_ONLINE", mServerObject.getNumUsersOnline());
             intent.putExtra("USERS_WATCHING", mServerObject.getNumUsersWatching());
             for(int i = 0 ; i < mServerObject.getNumUsersOnline(); i++){

@@ -1,4 +1,4 @@
-package enfieldacademy.convrgecompanion;
+package christiancoleman.whosonlineforconvrge;
 
 public class ConVRgePlayer {
 
