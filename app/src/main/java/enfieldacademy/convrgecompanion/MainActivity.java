@@ -218,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
 
     public class ConVRgeCompanionServiceReceiver extends BroadcastReceiver {
 
-        private final String TAG = "ConVRgeServiceReceiver";
+        //private final String TAG = "ConVRgeServiceReceiver";
 
         @SuppressLint("SetTextI18n")
         @Override
@@ -252,10 +252,11 @@ public class MainActivity extends AppCompatActivity {
         mUsersWatchingTV.setText(String.format(watching, mLocalServer.getNumUsersWatching()));
         mListOfUsersOnlineTV.setText("");
         for(int i = 0; i < mLocalServer.getOnlineUsersList().size(); i++){
-            String name;
-            if(i == 0) name = String.format(getResources().getString(R.string.users_list_textview_start), mLocalServer.getOnlineUsersList().get(i).getPlayerName());
-            else name = String.format(getResources().getString(R.string.users_list_textview_more), mLocalServer.getOnlineUsersList().get(i).getPlayerName());
-            mListOfUsersOnlineTV.setText(mListOfUsersOnlineTV.getText() + name);
+            String newName;
+            String oldNames = mListOfUsersOnlineTV.getText().toString();
+            if(i == 0) newName = String.format(getResources().getString(R.string.users_list_textview_start), mLocalServer.getOnlineUsersList().get(i).getPlayerName());
+            else newName = String.format(getResources().getString(R.string.users_list_textview_more), mLocalServer.getOnlineUsersList().get(i).getPlayerName());
+            mListOfUsersOnlineTV.setText(String.format(getResources().getString(R.string.users_textview_format_adder), oldNames, newName));
         }
 
         //Log.d(TAG, "***");

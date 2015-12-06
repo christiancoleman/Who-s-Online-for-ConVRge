@@ -9,6 +9,7 @@
     <string name="users_watching_textview">%d users watching</string>
     <string name="users_list_textview_start">%s</string>
     <string name="users_list_textview_more">, %s</string>
+    <string name="users_textview_format_adder">%1$s%2$s</string>
 
     <!-- menu strings -->
     <string name="notification_setting">Notifications</string>

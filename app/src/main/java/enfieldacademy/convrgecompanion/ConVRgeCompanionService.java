@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Looper;
 import android.os.Handler;
 import android.os.Message;
@@ -271,7 +270,7 @@ public class ConVRgeCompanionService extends Service {
         //////////////////////////////////////////////////
         startForeground(ConVRgeHelper.NOTIFICATION_ID_ALL_PLAYERS_PERSISTENT, notification);
 
-        Log.d(TAG, "createOrUpdateStaticNotification() ENDED (Notification made/updated!)");
+        //Log.d(TAG, "createOrUpdateStaticNotification() ENDED (Notification made/updated!)");
     }
 
     public void createNewPlayerOnlineNotifications(){
