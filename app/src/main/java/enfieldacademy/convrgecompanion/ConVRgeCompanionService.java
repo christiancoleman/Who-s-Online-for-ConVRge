@@ -250,9 +250,9 @@ public class ConVRgeCompanionService extends Service {
         PendingIntent pendingIntent = PendingIntent.getActivity(c, 0, targetIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Notification notification = new NotificationCompat.Builder(c)
+                .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle("ConVRge - " + mServerObject.getNumUsersOnline() + " players online")
                 .setContentText(allPlayersOnlineString)
-                .setSmallIcon(R.mipmap.ic_launcher)
                 .setColor(Color.BLACK)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
@@ -260,8 +260,17 @@ public class ConVRgeCompanionService extends Service {
 
         notification.flags = Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
 
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.notify(ConVRgeHelper.NOTIFICATION_ID_ALL_PLAYERS_PERSISTENT, notification);
+        ///////////////////////////////////////////////////
+        // OLD WAY OF STARTING PERSISTENT NOTIFICATION ////
+        ///////////////////////////////////////////////////
+        //NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        //notificationManager.notify(ConVRgeHelper.NOTIFICATION_ID_ALL_PLAYERS_PERSISTENT, notification);
+
+        //////////////////////////////////////////////////
+        // NEW WAY OF KEEPING PERSISTENT NOTIFICATION ///
+        //////////////////////////////////////////////////
+        startForeground(ConVRgeHelper.NOTIFICATION_ID_ALL_PLAYERS_PERSISTENT, notification);
+
         //Log.d(TAG, "createOrUpdateStaticNotification() ENDED (Notification made/updated!)");
     }
 
