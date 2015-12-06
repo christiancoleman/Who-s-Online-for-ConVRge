@@ -1,4 +1,4 @@
-package christiancoleman.whosonlineforconvrge;
+package info.christiancoleman.whosonlineforconvrge;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final String TAG = "ConVRgeMainActivity";
 
-    public ConVRgeCompanionServiceReceiver mServiceReceiver;
+    public WhosOnlineServiceReceiver mServiceReceiver;
     public TextView mUsersOnlineTV;
     public TextView mUsersWatchingTV;
     public TextView mListOfUsersOnlineTV;
@@ -41,8 +41,8 @@ public class MainActivity extends AppCompatActivity {
         /////////////////////////////////
         startService();
 
-        MyApplication.notificationsOn();
-        MyApplication.notificationSoundsOn();
+        WhosOnlineApplication.notificationsOn();
+        WhosOnlineApplication.notificationSoundsOn();
     }
 
     @Override
@@ -102,12 +102,12 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         String notificationsToggle;
         String notificationSoundsToggle;
-        if(MyApplication.areNotificationsOn()){
+        if(WhosOnlineApplication.areNotificationsOn()){
             notificationsToggle = getResources().getString(R.string.notifications_on);
         } else {
             notificationsToggle = getResources().getString(R.string.notifications_off);
         }
-        if(MyApplication.areNotificationSoundsOn()){
+        if(WhosOnlineApplication.areNotificationSoundsOn()){
             notificationSoundsToggle = getResources().getString(R.string.notification_sounds_on);
         } else {
             notificationSoundsToggle = getResources().getString(R.string.notification_sounds_off);
@@ -115,24 +115,24 @@ public class MainActivity extends AppCompatActivity {
         builder.setMessage(R.string.notification_setting)
                 .setPositiveButton(notificationsToggle, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        if(MyApplication.areNotificationsOn()) {
-                            MyApplication.notificationsOff();
+                        if(WhosOnlineApplication.areNotificationsOn()) {
+                            WhosOnlineApplication.notificationsOff();
                             showToast(getResources().getString(R.string.notifications_off));
                         }
                         else {
-                            MyApplication.notificationsOn();
+                            WhosOnlineApplication.notificationsOn();
                             showToast(getResources().getString(R.string.notifications_on));
                         }
                     }
                 })
                 .setNegativeButton(notificationSoundsToggle, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        if (MyApplication.areNotificationSoundsOn()) {
-                            MyApplication.notificationSoundsOff();
+                        if (WhosOnlineApplication.areNotificationSoundsOn()) {
+                            WhosOnlineApplication.notificationSoundsOff();
                             showToast(getResources().getString(R.string.notification_sounds_off));
                         }
                         else {
-                            MyApplication.notificationSoundsOn();
+                            WhosOnlineApplication.notificationSoundsOn();
                             showToast(getResources().getString(R.string.notification_sounds_on));
                         }
                     }
@@ -150,15 +150,15 @@ public class MainActivity extends AppCompatActivity {
     // Reference: http://developer.android.com/guide/components/services.html
     public void startService(){
         Log.d(TAG, "startService() called");
-        MyApplication.serviceStarted();
-        getApplicationContext().startService(new Intent(this, ConVRgeCompanionService.class));
+        WhosOnlineApplication.serviceStarted();
+        getApplicationContext().startService(new Intent(this, WhosOnlineService.class));
     }
 
     public void stopService(){
         Log.d(TAG, "stopService() called");
-        MyApplication.serviceEnded();
-        getApplicationContext().stopService(new Intent(this, ConVRgeCompanionService.class));
-        ConVRgeHelper.clearNotifications(this);
+        WhosOnlineApplication.serviceEnded();
+        getApplicationContext().stopService(new Intent(this, WhosOnlineService.class));
+        WhosOnlineHelper.clearNotifications(this);
     }
 
     // Reference: http://developer.android.com/images/training/basics/basic-lifecycle.png
@@ -199,24 +199,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void restoreState(){
-        MyApplication.activityResumed();
-        if(MyApplication.getSavedServer() == null) mLocalServer = new ConVRgeServer();
-        else mLocalServer = MyApplication.getSavedServer();
+        WhosOnlineApplication.activityResumed();
+        if(WhosOnlineApplication.getSavedServer() == null) mLocalServer = new ConVRgeServer();
+        else mLocalServer = WhosOnlineApplication.getSavedServer();
 
     }
 
     public void saveState(){
-        MyApplication.setSavedServer(mLocalServer);
-        MyApplication.activityPaused();
+        WhosOnlineApplication.setSavedServer(mLocalServer);
+        WhosOnlineApplication.activityPaused();
     }
 
     public void registerReceiver(){
-        mServiceReceiver = new ConVRgeCompanionServiceReceiver();
-        IntentFilter intentFilter = new IntentFilter("com.info.christiancoleman.CUSTOM_INTENT");
+        mServiceReceiver = new WhosOnlineServiceReceiver();
+        IntentFilter intentFilter = new IntentFilter("com.info.info.christiancoleman.CUSTOM_INTENT");
         registerReceiver(mServiceReceiver, intentFilter);
     }
 
-    public class ConVRgeCompanionServiceReceiver extends BroadcastReceiver {
+    public class WhosOnlineServiceReceiver extends BroadcastReceiver {
 
         //private final String TAG = "ConVRgeServiceReceiver";
 

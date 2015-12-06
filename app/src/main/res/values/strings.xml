@@ -17,8 +17,14 @@
     <string name="notification_sounds_off">Sounds Off</string>
     <string name="notifications_on">Notifications On</string>
     <string name="notifications_off">Notifications Off</string>
-    <string name="force_close_setting">Close Companion</string>
+    <string name="force_close_setting">Close Who\'s Online</string>
+
+    <!-- notification string -->
+    <string name="persistent_notification_title">ConVRge - %s players online</string>
+    <string name="persistent_notification_subtext">%s</string>
+    <string name="player_notification_title">ConVRge - player online!</string>
+    <string name="player_notification_subtext">%s online now!</string>
 
     <!-- obligatory image descriptions -->
-    <string name="logo_description">Convrge Logo</string>
+    <string name="logo_description">Who\'s Online for ConVRge Logo</string>
 </resources>

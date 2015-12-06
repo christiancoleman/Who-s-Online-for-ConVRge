@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    package="christiancoleman.whosonlineforconvrge" >
+    package="info.christiancoleman.whosonlineforconvrge" >
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
-        android:name="info.christiancoleman.convrgecompanion.MyApplication"
+        android:name=".WhosOnlineApplication"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
         android:allowBackup="true">
         <activity
-            android:name="info.christiancoleman.convrgecompanion.MainActivity"
+            android:name="info.christiancoleman.whosonlineforconvrge.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:launchMode="singleInstance">
@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
         <service
-            android:name="info.christiancoleman.convrgecompanion.ConVRgeCompanionService"
+            android:name=".WhosOnlineService"
             android:exported="false"/>
     </application>
 

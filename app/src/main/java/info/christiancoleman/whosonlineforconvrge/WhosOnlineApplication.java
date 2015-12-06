@@ -1,9 +1,9 @@
-package christiancoleman.whosonlineforconvrge;
+package info.christiancoleman.whosonlineforconvrge;
 
 import android.app.Application;
 
 // http://stackoverflow.com/questions/18038399/how-to-check-if-activity-is-in-foreground-or-in-visible-background
-public class MyApplication extends Application {
+public class WhosOnlineApplication extends Application {
 
     private static boolean activityVisible;
     private static boolean serviceStarted;

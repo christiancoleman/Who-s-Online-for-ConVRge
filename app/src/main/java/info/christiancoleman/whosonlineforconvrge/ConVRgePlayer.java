@@ -1,4 +1,4 @@
-package christiancoleman.whosonlineforconvrge;
+package info.christiancoleman.whosonlineforconvrge;
 
 public class ConVRgePlayer {
 

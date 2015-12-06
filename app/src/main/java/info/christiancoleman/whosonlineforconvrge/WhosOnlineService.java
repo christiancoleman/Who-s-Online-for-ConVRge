@@ -1,4 +1,4 @@
-package christiancoleman.whosonlineforconvrge;
+package info.christiancoleman.whosonlineforconvrge;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -34,9 +34,9 @@ import java.net.URL;
 import java.util.ArrayList;
 
 // Reference: http://developer.android.com/guide/components/services.html
-public class ConVRgeCompanionService extends Service {
+public class WhosOnlineService extends Service {
 
-    private final String TAG = "ConVRgeCompanionService";
+    private final String TAG = "WhosOnlineService";
 
     public ConVRgeServer mOldServerObject;
     public ConVRgeServer mServerObject;
@@ -61,14 +61,14 @@ public class ConVRgeCompanionService extends Service {
 
             // After we are done doing our work
             // We just sleep for 5 seconds.
-            while(MyApplication.isServiceStarted()){
+            while(WhosOnlineApplication.isServiceStarted()){
                 //Log.d(TAG, "=============================================================");
                 queryServer();
                 parseResult();
                 buildConVRgeServer();
                 printResults();
                 updateUIAndCreateNotifications();
-                sleep(ConVRgeHelper.PAUSE_DURATION);
+                sleep(WhosOnlineHelper.PAUSE_DURATION);
             }
 
             Log.d(TAG, "Do we make it here?");
@@ -125,7 +125,7 @@ public class ConVRgeCompanionService extends Service {
         Log.d(TAG, "onDestroy()1 called");
         super.onDestroy();
         Log.d(TAG, "onDestroy()2 called");
-        ConVRgeHelper.clearNotifications(this);
+        WhosOnlineHelper.clearNotifications(this);
         stopSelf();
     }
 
@@ -142,7 +142,7 @@ public class ConVRgeCompanionService extends Service {
         String line;
 
         try {
-            url = new URL(ConVRgeHelper.ENDPOINT);
+            url = new URL(WhosOnlineHelper.ENDPOINT);
         } catch (MalformedURLException e){
             // TODO: error handling
             //Log.d(TAG, "queryServer1");
@@ -222,7 +222,7 @@ public class ConVRgeCompanionService extends Service {
 
     public void updateUIAndCreateNotifications(){
         updatePersistentNotification();
-        if(MyApplication.isActivityVisible()) {
+        if(WhosOnlineApplication.isActivityVisible()) {
             updateUI();
         } else {
             createNewPlayerOnlineNotifications();
@@ -239,7 +239,7 @@ public class ConVRgeCompanionService extends Service {
     public void updatePersistentNotification(){
         //Log.d(TAG, "createOrUpdatePersistentNotification() STARTED");
 
-        if(mServerObject.getNumUsersOnline() == 0) ConVRgeHelper.clearIndividualPlayerNotifications(this);
+        if(mServerObject.getNumUsersOnline() == 0) WhosOnlineHelper.clearIndividualPlayerNotifications(this);
 
         ArrayList<ConVRgePlayer> playerList = mServerObject.getOnlineUsersList();
         String allPlayersOnlineString = "";
@@ -254,25 +254,19 @@ public class ConVRgeCompanionService extends Service {
 
         Notification notification = new NotificationCompat.Builder(c)
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("ConVRge - " + mServerObject.getNumUsersOnline() + " players online")
-                .setContentText(allPlayersOnlineString)
-                .setColor(Color.BLACK)
-                .setContentIntent(pendingIntent)
-                .setAutoCancel(false)
+                .setContentTitle(String.format(getResources().getString(R.string.persistent_notification_title), mServerObject.getNumUsersOnline()))
+                        .setContentText(String.format(getResources().getString(R.string.persistent_notification_subtext), allPlayersOnlineString))
+                        .setColor(Color.BLACK)
+                        .setContentIntent(pendingIntent)
+                        .setAutoCancel(false)
                 .build();
 
         notification.flags = Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
 
-        ///////////////////////////////////////////////////
-        // OLD WAY OF STARTING PERSISTENT NOTIFICATION ////
-        ///////////////////////////////////////////////////
-        //NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        //notificationManager.notify(ConVRgeHelper.NOTIFICATION_ID_ALL_PLAYERS_PERSISTENT, notification);
-
         //////////////////////////////////////////////////
-        // NEW WAY OF KEEPING PERSISTENT NOTIFICATION ///
+        // KEEPS SERVICE TRULY PERSISTENT ////////////////
         //////////////////////////////////////////////////
-        startForeground(ConVRgeHelper.NOTIFICATION_ID_ALL_PLAYERS_PERSISTENT, notification);
+        startForeground(WhosOnlineHelper.NOTIFICATION_ID_ALL_PLAYERS_PERSISTENT, notification);
 
         //Log.d(TAG, "createOrUpdateStaticNotification() ENDED (Notification made/updated!)");
     }
@@ -280,8 +274,8 @@ public class ConVRgeCompanionService extends Service {
     public void createNewPlayerOnlineNotifications(){
         //Log.d(TAG, "createNewPlayerOnlineNotifications() STARTED");
 
-        if(!MyApplication.areNotificationsOn()) {
-            ConVRgeHelper.clearIndividualPlayerNotifications(this);
+        if(!WhosOnlineApplication.areNotificationsOn()) {
+            WhosOnlineHelper.clearIndividualPlayerNotifications(this);
             return;
         }
 
@@ -313,23 +307,23 @@ public class ConVRgeCompanionService extends Service {
         Intent targetIntent = new Intent(c, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(c, 0, targetIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        if(MyApplication.areNotificationSoundsOn()) {
+        if(WhosOnlineApplication.areNotificationSoundsOn()) {
             MediaPlayer mp = MediaPlayer.create(this, R.raw.player_joined_sound);
             mp.start();
         }
 
         Notification notification = new NotificationCompat.Builder(c)
-                .setContentTitle("ConVRge - player online!")
+                .setContentTitle(getResources().getString(R.string.player_notification_title))
                 .setContentText(newPlayersString)
-                .setTicker(newPlayersString + " online now!")
-                .setSmallIcon(R.mipmap.friend_online)
-                .setColor(Color.BLACK)
-                .setContentIntent(pendingIntent)
-                .setAutoCancel(true)
+                .setTicker(String.format(getResources().getString(R.string.player_notification_subtext), newPlayersString))
+                        .setSmallIcon(R.mipmap.friend_online)
+                        .setColor(Color.BLACK)
+                        .setContentIntent(pendingIntent)
+                        .setAutoCancel(true)
                 .build();
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.notify(ConVRgeHelper.NOTIFICATION_ID_INDIVIDUAL_PLAYERS, notification);
+        notificationManager.notify(WhosOnlineHelper.NOTIFICATION_ID_INDIVIDUAL_PLAYERS, notification);
         //Log.d(TAG, "createNewPlayerOnlineNotifications() ENDED (Notification made!)");
     }
 
@@ -341,7 +335,7 @@ public class ConVRgeCompanionService extends Service {
     public void sleep(int duration){
         //Log.d(TAG, "=============================================================");
         SystemClock.sleep(duration);
-        Log.d(TAG, ConVRgeHelper.PAUSE_DURATION / 1000 + " seconds has passed"); // 1000 is # ms = 1 second
+        Log.d(TAG, WhosOnlineHelper.PAUSE_DURATION / 1000 + " seconds has passed"); // 1000 is # ms = 1 second
     }
 
     public class ConVRgeUIThread extends Thread{
@@ -350,7 +344,7 @@ public class ConVRgeCompanionService extends Service {
         public void run() {
             //Log.d(TAG, "This is being called at least.");
             Intent intent = new Intent();
-            intent.setAction("com.info.christiancoleman.CUSTOM_INTENT");
+            intent.setAction("com.info.info.christiancoleman.CUSTOM_INTENT");
             intent.putExtra("USERS_ONLINE", mServerObject.getNumUsersOnline());
             intent.putExtra("USERS_WATCHING", mServerObject.getNumUsersWatching());
             for(int i = 0 ; i < mServerObject.getNumUsersOnline(); i++){

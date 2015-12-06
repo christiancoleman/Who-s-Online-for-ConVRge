@@ -1,4 +1,4 @@
-package christiancoleman.whosonlineforconvrge;
+package info.christiancoleman.whosonlineforconvrge;
 
 import android.app.NotificationManager;
 import android.content.Context;
@@ -6,7 +6,7 @@ import android.content.Context;
 /**
  * This class will hold constants and static methods used throughout the app.
  */
-public class ConVRgeHelper {
+public class WhosOnlineHelper {
 
     public static final String ENDPOINT = "http://www.convrge.co/api/users?watching=true";
     public static final int NOTIFICATION_ID_ALL_PLAYERS_PERSISTENT = 31337;
